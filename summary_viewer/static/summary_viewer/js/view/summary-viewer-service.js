@@ -88,9 +88,9 @@ angular.module('cartoview.summaryViewerApp').service('summaryViewerService', fun
                     angular.forEach(layerSummary, function (attrSummary, attrName) {
                         attrSummary.count = index;
                         if(angular.isNumber(f.properties[attrName])) {
-                            attrSummary.sum = attrSummary.sum == NaN ? f.properties[attrName] : f.properties[attrName] + attrSummary.sum ;
-                            attrSummary.min = attrSummary.min == NaN ? f.properties[attrName] : Math.min(f.properties[attrName], attrSummary.min);
-                            attrSummary.max = attrSummary.max == NaN ? f.properties[attrName] : Math.max(f.properties[attrName], attrSummary.min);
+                            attrSummary.sum = isNaN(attrSummary.sum) ? f.properties[attrName] : f.properties[attrName] + attrSummary.sum ;
+                            attrSummary.min = isNaN(attrSummary.min) ? f.properties[attrName] : Math.min(f.properties[attrName], attrSummary.min);
+                            attrSummary.max = isNaN(attrSummary.max) ? f.properties[attrName] : Math.max(f.properties[attrName], attrSummary.min);
                         }
                     });
                 });
