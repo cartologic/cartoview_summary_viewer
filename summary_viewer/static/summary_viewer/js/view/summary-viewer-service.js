@@ -45,13 +45,14 @@ angular.module('cartoview.summaryViewerApp').service('summaryViewerService', fun
             }
             if(summarizedData[item.layer][item.attribute] == undefined) {
                 summarizedData[item.layer][item.attribute] = {
-                    sum: 0,
+                    sum: NaN,
                     count: 0,
-                    min: 0,
-                    max: 0
+                    min: NaN,
+                    max: NaN
                 };
                 Object.defineProperty(summarizedData[item.layer][item.attribute], 'avg', {
                     get: function () {
+                        if(this.sum == NaN) return NaN;
                         return Math.round((this.sum / this.count) *100) / 100;
                     }
                 });
@@ -85,10 +86,12 @@ angular.module('cartoview.summaryViewerApp').service('summaryViewerService', fun
             }).success(function (data) {
                 angular.forEach(data.features, function (f, index, features) {
                     angular.forEach(layerSummary, function (attrSummary, attrName) {
-                        attrSummary.sum += f.properties[attrName];
                         attrSummary.count = index;
-                        attrSummary.min = Math.min(f.properties[attrName], attrSummary.min);
-                        attrSummary.max = Math.max(f.properties[attrName], attrSummary.min);
+                        if(angular.isNumber(f.properties[attrName])) {
+                            attrSummary.sum = attrSummary.sum == NaN ? f.properties[attrName] : f.properties[attrName] + attrSummary.sum ;
+                            attrSummary.min = attrSummary.min == NaN ? f.properties[attrName] : Math.min(f.properties[attrName], attrSummary.min);
+                            attrSummary.max = attrSummary.max == NaN ? f.properties[attrName] : Math.max(f.properties[attrName], attrSummary.min);
+                        }
                     });
                 });
                 layerSummary.loading = false;
