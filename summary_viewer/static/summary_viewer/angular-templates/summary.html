@@ -1,0 +1,17 @@
+<div class="summary " layout="row" layout-align="start center">
+    <div ng-repeat="item in summary.items"
+         ng-show="!collapsed"
+         class="summary-item md-whiteframe-2dp"
+         layout="column" layout-align="start center" >
+        <h4>{{ item.title }}</h4>
+        <h3 ng-show="!summary.summarizedData[item.layer].loading">{{ summary.summarizedData[item.layer][item.attribute][item.operation] }}</h3>
+        <md-progress-circular md-mode="indeterminate" ng-show="summary.summarizedData[item.layer].loading"></md-progress-circular>
+    </div>
+    <div>
+        <md-button  ng-click="collapsed = !collapsed" class="md-raised summary-collapse-btn">
+            <md-icon ng-show="!collapsed">expand_more</md-icon>
+            <md-icon ng-show="collapsed">expand_less</md-icon>
+        </md-button>
+    </div>
+</div>
+
