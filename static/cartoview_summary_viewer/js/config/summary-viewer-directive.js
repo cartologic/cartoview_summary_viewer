@@ -1,7 +1,7 @@
 /**
  * Created by kamal on 6/29/16.
  */
-angular.module('cartoview.viewer.editor').directive('summaryViewerConfig',  function(urlsHelper) {
+angular.module('cartoview.viewer.editor').directive('summaryViewerConfig', function (urlsHelper) {
     var numericTypes = ['xsd:byte',
         'xsd:decimal',
         'xsd:double',
@@ -33,37 +33,40 @@ angular.module('cartoview.viewer.editor').directive('summaryViewerConfig',  func
                 name: 'sum',
                 title: 'Summation'
             },
-            {
-                name: 'avg',
-                title: 'Average'
-            },
-            {
-                name: 'count',
-                title: 'Count'
-            },
-            {
-                name: 'min',
-                title: 'Minimum'
-            },
-            {
-                name: 'max',
-                title: 'Maximum'
-            }];
+                {
+                    name: 'avg',
+                    title: 'Average'
+                },
+                {
+                    name: 'count',
+                    title: 'Count'
+                },
+                {
+                    name: 'min',
+                    title: 'Minimum'
+                },
+                {
+                    name: 'max',
+                    title: 'Maximum'
+                }];
             var layersDict = {};
             var initialized = false;
             var populateLayers = function () {
                 $scope.mapLayers = [];
-                angular.forEach(dataService.selected.map.map_layers, function (layer) {
-                    if (!layer.fixed) {
-                        layer.params = JSON.parse(layer.layer_params);
-                        layersDict[layer.name] = layer;
-                        var layerInfo = {
-                            name: layer.name,
-                            title: layer.params.title
-                        };
-                        $scope.mapLayers.push(layerInfo);
-                    }
-                });
+                if (dataService.selected.map) {
+                    angular.forEach(dataService.selected.map.map_layers, function (layer) {
+                        if (!layer.fixed) {
+                            layer.params = JSON.parse(layer.layer_params);
+                            layersDict[layer.name] = layer;
+                            var layerInfo = {
+                                name: layer.name,
+                                title: layer.params.title
+                            };
+                            $scope.mapLayers.push(layerInfo);
+                        }
+                    });
+                }
+
             };
             $scope.getLayerAttrs = function (item) {
                 if (!item.layer) return null;
