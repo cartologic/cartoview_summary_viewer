@@ -7,6 +7,7 @@ import WpsClient from './wps-client.jsx';
 import $ from "jquery";
 import 'openlayers/css/ol.css';
 import './app.css';
+import FloatingPanel from './floatingPanel';
 import {
   Container,
   Row,
@@ -44,14 +45,12 @@ export default class CartoviewCharts extends React.Component {
     this.wpsClient = new WpsClient({geoserverUrl: geoserver_url});
     this.state = {
       data: [],
-      panelOpen: true,
       loading: true,
       config: {
         mapId: map_id
       }
     }
     this.map.once('postrender', function(event) {
-      console.log(event)
       var extent = this.map.getView().calculateExtent(this.map.getSize());
       let filters = {
         minx: extent[0],
@@ -131,81 +130,14 @@ export default class CartoviewCharts extends React.Component {
     this.map.setTarget(findDOMNode(this.refs.map));
 
   }
-  _togglePanel() {
-    this.setState({
-      panelOpen: !this.state.panelOpen
-    })
-  }
   render() {
-    let Style = this.state.panelOpen
-      ? {
-        display: 'block'
-      }
-      : {
-        display: 'none'
-      };
-    let element = this.state.panelOpen
-      ? <i className="fa fa-chevron-down"></i>
-      : <i className="fa fa-chevron-up"></i>;
-    let cards = this.state.data.map((item, i) => {
-      let card = <Card key={i} style={{
-        marginRight: 10
-      }}>
-        <CardBlock>
-          <CardTitle>{item.title}</CardTitle>
-          <hr></hr>
-          <CardText style={{
-            textAlign: 'center'
-          }}>
-            <Badge color="success" pill>{item.value}</Badge>
-          </CardText>
-        </CardBlock>
-      </Card>;
-      return card
-    })
+
     return (
-      <div style={{
-        height: '100%',
-        width: '100%'
-      }}>
+      <div className="full-height-width">
         <div ref="map" className="map"></div>
-        <div style={{
-          width: '100%',
-          position: 'absolute',
-          bottom: 0
-        }}>
-          <Row>
-            <Col style={{
-              textAlign: 'center'
-            }} sm={{
-              size: 6,
-              push: 2,
-              pull: 2,
-              offset: 1
-            }}>
-              <Button onClick={this._togglePanel.bind(this)} color="secondary">{element}</Button>
-            </Col>
-          </Row>
-          <Row style={Style}>
-            <Col style={{
-              background: 'white',
-              borderRadius: 5,
-              border: 'solid lightgray 1px'
-            }} sm={{
-              size: 6,
-              push: 2,
-              pull: 2,
-              offset: 1
-            }}>
-              <Row id="style-7" style={{
-                overflowX: 'auto'
-              }}>
-                {cards}
-              </Row>
-            </Col>
-          </Row>
-        </div>
+        <FloatingPanel data={this.state.data} loading={this.state.loading}></FloatingPanel>
       </div>
+
     )
   }
 }
