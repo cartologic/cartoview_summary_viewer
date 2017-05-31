@@ -1,36 +1,31 @@
 import React from 'react';
 import {render, findDOMNode} from 'react-dom';
+import {addLocaleData, IntlProvider} from 'react-intl';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+import enLocaleData from 'react-intl/locale-data/en';
+import enMessages from '@boundlessgeo/sdk/locale/en';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MapConfigTransformService from '@boundlessgeo/sdk/services/MapConfigTransformService';
 import MapConfigService from '@boundlessgeo/sdk/services/MapConfigService';
-import ol from 'openlayers'
+import LayerList from '@boundlessgeo/sdk/components/LayerList';
+import ol from 'openlayers';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import BaseMapModal from '@boundlessgeo/sdk/components/BaseMapModal';
+import Zoom from '@boundlessgeo/sdk/components/Zoom';
+import Legend from '@boundlessgeo/sdk/components/Legend';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
 import WpsClient from './wps-client.jsx';
 import $ from "jquery";
-import 'openlayers/css/ol.css';
+import CustomTheme from './theme';
 import './app.css';
 import FloatingPanel from './floatingPanel';
-import {
-  Container,
-  Row,
-  Col,
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  Button,
-  Card,
-  CardTitle,
-  CardText,
-  CardBlock,
-  Badge
-} from 'reactstrap';
-export default class CartoviewCharts extends React.Component {
+injectTapEventPlugin();
+addLocaleData(enLocaleData);
+export default class CartoviewSummary extends React.Component {
   constructor(props) {
     super(props)
     this.map = new ol.Map({
-      //controls: [new ol.control.Attribution({collapsible: false}), new ol.control.ScaleLine()],
       layers: [new ol.layer.Tile({title: 'OpenStreetMap', source: new ol.source.OSM()})],
       view: new ol.View({
         center: [
@@ -73,6 +68,7 @@ export default class CartoviewCharts extends React.Component {
     });
 
   }
+
   update(config) {
     if (config && config.mapId) {
       var url = mapUrl;
@@ -94,12 +90,15 @@ export default class CartoviewCharts extends React.Component {
   componentWillMount() {
     this.update(this.state.config);
   }
+  getChildContext() {
+    return {muiTheme: getMuiTheme(CustomTheme)};
+  }
   updateResults(extent) {
     let data = [],
       loading = true;
     this.setState({data, loading});
     appConfig.summaryViewer.items.forEach((item, i) => {
-      if(extent != undefined){
+      if (extent != undefined) {
         this.wpsClient.aggregateWithFilters({aggregationAttribute: item.attribute, aggregationFunction: item.operation, filters: extent, typeName: item.layer}).then((res) => {
           data.push({value: res.AggregationResults[0][0], title: item.title});
           if (data.length == appConfig.summaryViewer.items.length) {
@@ -108,9 +107,8 @@ export default class CartoviewCharts extends React.Component {
           this.setState({data, loading})
           $(".se-pre-con").fadeOut("slow");
 
-
         });
-      }else{
+      } else {
         this.wpsClient.aggregate({aggregationAttribute: item.attribute, aggregationFunction: item.operation, typeName: item.layer}).then((res) => {
           data.push({value: res.AggregationResults[0][0], title: item.title});
           if (data.length == appConfig.summaryViewer.items.length) {
@@ -118,7 +116,6 @@ export default class CartoviewCharts extends React.Component {
           }
           this.setState({data, loading})
           $(".se-pre-con").fadeOut("slow");
-
 
         });
       }
@@ -130,16 +127,56 @@ export default class CartoviewCharts extends React.Component {
     this.map.setTarget(findDOMNode(this.refs.map));
 
   }
+  _toggleBaseMapModal() {
+    this.refs.basemapmodal.getWrappedInstance().open();
+  }
   render() {
+    const basemap_button = appConfig.showBasemapSwitcher
+      ? <FloatingActionButton className="basemap_button" onTouchTap={this._toggleBaseMapModal.bind(this)} mini={true}>
+          <i className="fa fa-map" aria-hidden="true"></i>
+        </FloatingActionButton>
+      : "";
+    const base_map_modal = appConfig.showBasemapSwitcher
+      ? <BaseMapModal ref='basemapmodal' map={this.map}/>
+      : "";
+    let layerlist = appConfig.showLayerSwitcher
+      ? <LayerList allowFiltering={true} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={this.map}/>
+      : '';
+    let legend_elements = appConfig.showLegend
+      ? <IconMenu id="hisham" iconButtonElement={< FloatingActionButton mini = {
+          true
+        } > <i className="fa fa-square-o"></i> < /FloatingActionButton>} anchorOrigin={{
+          horizontal: 'left',
+          vertical: 'top'
+        }} targetOrigin={{
+          horizontal: 'left',
+          vertical: 'top'
+        }}>
+          <Legend map={this.map}/>
+        </IconMenu>
+      : '';
+    let zoom = appConfig.showZoombar
+      ? <Zoom map={this.map}/>
+      : '';
 
     return (
       <div className="full-height-width">
+        {basemap_button}
         <div ref="map" className="map"></div>
         <FloatingPanel data={this.state.data} loading={this.state.loading}></FloatingPanel>
+        {layerlist}
+        {base_map_modal}
+        {zoom}
+        <div className="legends">{legend_elements}</div>
       </div>
 
     )
   }
 }
+CartoviewSummary.childContextTypes = {
+  muiTheme: React.PropTypes.object
+};
 render(
-  <CartoviewCharts></CartoviewCharts>, document.getElementById('root'))
+  <IntlProvider locale='en' messages={enMessages}>
+  <CartoviewSummary></CartoviewSummary>
+</IntlProvider>, document.getElementById('root'))

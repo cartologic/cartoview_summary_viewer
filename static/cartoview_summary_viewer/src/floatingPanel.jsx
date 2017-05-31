@@ -1,100 +1,57 @@
 import React from 'react';
+import Paper from 'material-ui/Paper';
+import {BottomNavigation, BottomNavigationItem} from 'material-ui/BottomNavigation';
+import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
 import {
-  Row,
-  Col,
-  Button,
-  Card,
-  CardTitle,
-  CardText,
-  CardBlock,
-  Badge
-} from 'reactstrap';
-
+  cyanA200,
+  cyanA400,
+  black
+} from 'material-ui/styles/colors';
+const styles = {
+  chip: {
+    margin: 4,
+  },
+  wrapper: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+};
 export default class FloatingPanel extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      panelOpen: true
-    }
-  }
-  _togglePanel() {
-    this.setState({
-      panelOpen: !this.state.panelOpen
-    })
   }
   render() {
-    let expandingIcon = this.state.panelOpen
-      ? <i className="fa fa-chevron-down"></i>
-      : <i className="fa fa-chevron-up"></i>;
-    let Style = this.state.panelOpen
-      ? {
-        display: 'block'
-      }
-      : {
-        display: 'none'
-      };
-    let loadingItems = <Card style={{
-      marginRight: 10
-    }}>
-      <CardBlock>
-        <CardTitle>Processing</CardTitle>
-        <hr></hr>
-        <CardText style={{
-          textAlign: 'center'
-        }}>
-          <i className="fa fa-circle-o-notch fa-spin" style={{fontSize:48}}></i>
-        </CardText>
-      </CardBlock>
-    </Card>;
+    let loadingItem=<Chip
+        backgroundColor={cyanA200}
+        style={styles.chip}
+      >
+        <Avatar size={32} color={black} backgroundColor={cyanA400}>
+          <i className="fa fa-circle-o-notch fa-spin" style={{fontSize:24}}></i>
+        </Avatar>
+        Processing
+      </Chip>;
+    let itemChips = this.props.data.map((item, i) => {
+      return <Chip key={i}
+          backgroundColor={cyanA200}
+          style={styles.chip}
+        >
+          <Avatar size={32} color={black} backgroundColor={cyanA400}>
+            {item.value}
+          </Avatar>
+          {item.title}
+        </Chip>
 
-    let cards = this.props.data.map((item, i) => {
-      let card = <Card key={i} style={{
-        marginRight: 10
-      }}>
-        <CardBlock>
-          <CardTitle>{item.title}</CardTitle>
-          <hr></hr>
-          <CardText style={{
-            textAlign: 'center'
-          }}>
-            <Badge color="success" pill>{item.value}</Badge>
-          </CardText>
-        </CardBlock>
-      </Card>;
-      return card
-    })
-    let items = this.props.loading ? loadingItems : cards ;
+     })
+     let final_items=this.props.loading ? loadingItem : itemChips ;
     return (
-      <div className="panel-wrapper">
-        <Row>
-          <Col style={{
-            textAlign: 'center'
-          }} sm={{
-            size: 6,
-            push: 2,
-            pull: 2,
-            offset: 1
-          }}>
-            <Button onClick={this._togglePanel.bind(this)} color="secondary">{expandingIcon}</Button>
-          </Col>
-        </Row>
-        <Row style={Style}>
-          <Col style={{
-            background: 'white',
-            borderRadius: 5,
-            border: 'solid lightgray 1px'
-          }} sm={{
-            size: 6,
-            push: 2,
-            pull: 2,
-            offset: 1
-          }}>
-            <Row id="style-7" className="scrollbar-x">
-              {items}
-            </Row>
-          </Col>
-        </Row>
+      <div className="bottom-chips">
+        <span className="chipsWrap">
+          {final_items}
+        </span>
+
       </div>
+
     )
   }
 }
