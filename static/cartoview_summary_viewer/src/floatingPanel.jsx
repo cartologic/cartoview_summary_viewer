@@ -27,7 +27,10 @@ export default class FloatingPanel extends React.Component {
       </Avatar>
       Processing
     </Chip>;
-    let itemChips = this.props.data.map((item, i) => {
+    let sorted_data= this.props.data.sort(function(a,b){
+      return a.id - b.id
+    });
+    let itemChips = sorted_data.map((item, i) => {
       return <Chip key={i} backgroundColor={lightBlue100
 } style={styles.chip}>
         <span>{item.title}</span>

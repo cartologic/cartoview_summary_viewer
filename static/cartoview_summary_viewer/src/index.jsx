@@ -25,6 +25,9 @@ addLocaleData(enLocaleData);
 export default class CartoviewSummary extends React.Component {
   constructor(props) {
     super(props)
+    appConfig.summaryViewer.items.map((item, i) => {
+      item.id = i;
+    })
     this.map = new ol.Map({
       layers: [new ol.layer.Tile({title: 'OpenStreetMap', source: new ol.source.OSM()})],
       view: new ol.View({
@@ -45,17 +48,6 @@ export default class CartoviewSummary extends React.Component {
         mapId: map_id
       }
     }
-    this.map.once('postrender', function(event) {
-      var extent = this.map.getView().calculateExtent(this.map.getSize());
-      let filters = {
-        minx: extent[0],
-        miny: extent[1],
-        maxx: extent[2],
-        maxy: extent[3]
-      }
-      this.updateResults(filters);
-    });
-
     this.map.on('moveend', () => {
       var extent = this.map.getView().calculateExtent(this.map.getSize());
       let filters = {
@@ -100,7 +92,7 @@ export default class CartoviewSummary extends React.Component {
     appConfig.summaryViewer.items.forEach((item, i) => {
       if (extent != undefined) {
         this.wpsClient.aggregateWithFilters({aggregationAttribute: item.attribute, aggregationFunction: item.operation, filters: extent, typeName: item.layer}).then((res) => {
-          data.push({value: res.AggregationResults[0][0], title: item.title});
+          data.push({value: res.AggregationResults[0][0],id:item.id, title: item.title});
           if (data.length == appConfig.summaryViewer.items.length) {
             loading = false;
           }
@@ -125,6 +117,7 @@ export default class CartoviewSummary extends React.Component {
   }
   componentDidMount() {
     this.map.setTarget(findDOMNode(this.refs.map));
+    this.updateResults(undefined);
 
   }
   _toggleBaseMapModal() {
@@ -143,7 +136,9 @@ export default class CartoviewSummary extends React.Component {
       ? <LayerList allowFiltering={true} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={this.map}/>
       : '';
     let legend_elements = appConfig.showLegend
-      ? <IconMenu menuStyle={{width:'auto'}} iconButtonElement={< FloatingActionButton mini = {
+      ? <IconMenu menuStyle={{
+          width: 'auto'
+        }} iconButtonElement={< FloatingActionButton mini = {
           true
         } > <i className="fa fa-square-o"></i> < /FloatingActionButton>} anchorOrigin={{
           horizontal: 'left',
