@@ -9,6 +9,11 @@
   width: 100%;
 }
 
+[class*=hint--] {
+  position: relative;
+  display: inline-block;
+}
+
 .panel-wrapper {
   width: 100%;
   position: absolute;
