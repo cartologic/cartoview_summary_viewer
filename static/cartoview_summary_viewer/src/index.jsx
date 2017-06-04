@@ -143,7 +143,7 @@ export default class CartoviewSummary extends React.Component {
       ? <LayerList allowFiltering={true} showOpacity={true} showDownload={true} showGroupContent={true} showZoomTo={true} allowReordering={true} map={this.map}/>
       : '';
     let legend_elements = appConfig.showLegend
-      ? <IconMenu id="hisham" iconButtonElement={< FloatingActionButton mini = {
+      ? <IconMenu menuStyle={{width:'auto'}} iconButtonElement={< FloatingActionButton mini = {
           true
         } > <i className="fa fa-square-o"></i> < /FloatingActionButton>} anchorOrigin={{
           horizontal: 'left',
