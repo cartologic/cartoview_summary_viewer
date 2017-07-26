@@ -4,9 +4,9 @@ import '../css/app.css'
 import Navigator from './components/Navigator.jsx'
 
 import ResourceSelector from './components/ResourceSelector.jsx'
-
 import General from './components/General.jsx'
 import NavigationTools from './components/NavigationTools.jsx'
+import SummaryViewerConfig from './components/SummaryViewerConfig.jsx'
 // import MapTools from './components/MapTools.jsx'
 // import Reporting from './components/Reporting.jsx'
 // import DisplayConfig from './components/DisplayConfig.jsx'
@@ -83,11 +83,12 @@ export default class Edit extends Component {
         label: "Navigation Tools",
         component: NavigationTools,
         props: {
-          state: this.state,
           instance: this.state.selectedResource,
           config: this.props.config.instance
             ? this.props.config.instance.config
-            : undefined,
+            : this.state.config.config
+              ? this.state.config.config
+              : undefined,
           onComplete: (basicConfig) => {
             var {step} = this.state;
             this.setState({
@@ -99,7 +100,28 @@ export default class Edit extends Component {
             this.onPrevious()
           }
         }
-
+      }, {
+        label: "Summary Viewer Configuration",
+        component: SummaryViewerConfig,
+        props: {
+          instance: this.state.selectedResource,
+          config: this.props.config.instance
+            ? this.props.config.instance.config
+            : this.state.config.config
+              ? this.state.config.config
+              : undefined,
+          onComplete: (basicConfig) => {
+            console.log(basicConfig);
+            // var {step} = this.state;
+            // this.setState({
+            //   config: Object.assign(this.state.config, basicConfig)
+            // })
+            // this.goToStep(++step)
+          },
+          onPrevious: () => {
+            this.onPrevious()
+          }
+        }
       }
 
     ]

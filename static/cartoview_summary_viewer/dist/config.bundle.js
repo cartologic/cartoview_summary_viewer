@@ -23416,6 +23416,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _NavigationTools2 = _interopRequireDefault(_NavigationTools);
 	
+	var _SummaryViewerConfig = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/SummaryViewerConfig.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	
+	var _SummaryViewerConfig2 = _interopRequireDefault(_SummaryViewerConfig);
+	
 	var _editService = __webpack_require__(/*! ./services/editService.jsx */ 444);
 	
 	var _editService2 = _interopRequireDefault(_editService);
@@ -23508,9 +23512,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	      label: "Navigation Tools",
 	      component: _NavigationTools2.default,
 	      props: {
-	        state: this.state,
 	        instance: this.state.selectedResource,
-	        config: this.props.config.instance ? this.props.config.instance.config : undefined,
+	        config: this.props.config.instance ? this.props.config.instance.config : this.state.config.config ? this.state.config.config : undefined,
 	        onComplete: function onComplete(basicConfig) {
 	          var step = _this2.state.step;
 	
@@ -23523,7 +23526,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _this2.onPrevious();
 	        }
 	      }
-	
+	    }, {
+	      label: "Summary Viewer Configuration",
+	      component: _SummaryViewerConfig2.default,
+	      props: {
+	        instance: this.state.selectedResource,
+	        config: this.props.config.instance ? this.props.config.instance.config : this.state.config.config ? this.state.config.config : undefined,
+	        onComplete: function onComplete(basicConfig) {
+	          console.log(basicConfig);
+	          // var {step} = this.state;
+	          // this.setState({
+	          //   config: Object.assign(this.state.config, basicConfig)
+	          // })
+	          // this.goToStep(++step)
+	        },
+	        onPrevious: function onPrevious() {
+	          _this2.onPrevious();
+	        }
+	      }
 	    }];
 	    return _react2.default.createElement(
 	      'div',
@@ -37788,18 +37808,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	// const zoomControls = t.struct({
-	//   duration: t.Number,
-	//   ZoomInTip: t.String,
-	//   delta: t.Number,
-	//   ZoomOutTip: t.String,
-	// })
-	//
-	// const showZoomControls = t.struct({
-	//   showZoomControl: t.Boolean,
-	//   zoomControls: zoomControls
-	// })
-	
 	var mapConfig = _tcombForm2.default.struct({ showZoombar: _tcombForm2.default.Boolean, showLayerSwitcher: _tcombForm2.default.Boolean, showBaseMapSwitcher: _tcombForm2.default.Boolean, showLegend: _tcombForm2.default.Boolean });
 	
 	var options = {
@@ -37840,13 +37848,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _this;
 	  }
 	
-	  NavigationTools.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
-	    // console.log(nextProps);
-	    // if (nextProps.config !== this.state.defaultConfig) {
-	    this.setState({ defaultConfig: nextProps.config, success: nextProps.success });
-	    // }
-	  };
-	
 	  NavigationTools.prototype.save = function save() {
 	    var basicConfig = this.refs.form.getValue();
 	    if (basicConfig) {
@@ -37871,35 +37872,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _react2.default.createElement(
 	        'div',
 	        { className: 'row' },
-	        _react2.default.createElement('div', { className: 'col-xs-5 col-md-4' }),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'col-xs-7 col-md-8' },
-	          _react2.default.createElement(
-	            'button',
-	            { style: {
-	                display: "inline-block",
-	                margin: "0px 3px 0px 3px"
-	              }, className: 'btn btn-primary btn-sm pull-right disabled', onClick: this.save.bind(this) },
-	            "next >>"
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            { style: {
-	                display: "inline-block",
-	                margin: "0px 3px 0px 3px"
-	              }, className: 'btn btn-primary btn-sm pull-right', onClick: function onClick() {
-	                return _this2.props.onPrevious();
-	              } },
-	            "<< Previous"
-	          )
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'row', style: {
-	            marginTop: "3%"
-	          } },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'col-xs-5 col-md-4' },
@@ -37913,41 +37885,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	          'div',
 	          { className: 'col-xs-7 col-md-8' },
 	          _react2.default.createElement(
-	            'a',
+	            'button',
 	            { style: {
 	                display: "inline-block",
 	                margin: "0px 3px 0px 3px"
-	              }, className: this.state.success === true ? "btn btn-primary btn-sm pull-right" : "btn btn-primary btn-sm pull-right disabled", href: '/apps/cartoview_map_viewer_react/' + this.props.id + '/view/' },
-	            'View'
-	          ),
-	          _react2.default.createElement(
-	            'a',
-	            { style: {
-	                display: "inline-block",
-	                margin: "0px 3px 0px 3px"
-	              }, className: this.state.success === true ? "btn btn-primary btn-sm pull-right" : "btn btn-primary btn-sm pull-right disabled", href: '/apps/appinstance/' + this.props.id + '/', target: "_blank" },
-	            'Details'
+	              }, className: 'btn btn-primary btn-sm pull-right', onClick: this.save.bind(this) },
+	            "next >>"
 	          ),
 	          _react2.default.createElement(
 	            'button',
 	            { style: {
 	                display: "inline-block",
 	                margin: "0px 3px 0px 3px"
-	              }, className: this.state.success === true ? "btn btn-primary btn-sm pull-right disabled" : "btn btn-primary btn-sm pull-right", onClick: this.save.bind(this) },
-	            'Save'
-	          ),
-	          _react2.default.createElement(
-	            'p',
-	            { style: this.state.success == true ? {
-	                display: "inline-block",
-	                margin: "0px 3px 0px 3px",
-	                float: "right"
-	              } : {
-	                display: "none",
-	                margin: "0px 3px 0px 3px",
-	                float: "right"
+	              }, className: 'btn btn-primary btn-sm pull-right', onClick: function onClick() {
+	                return _this2.props.onPrevious();
 	              } },
-	            'App instance successfully created!'
+	            "<< Previous"
 	          )
 	        )
 	      ),
