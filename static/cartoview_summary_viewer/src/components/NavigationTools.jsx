@@ -1,18 +1,6 @@
 import React, {Component} from 'react';
 import t from 'tcomb-form';
 
-// const zoomControls = t.struct({
-//   duration: t.Number,
-//   ZoomInTip: t.String,
-//   delta: t.Number,
-//   ZoomOutTip: t.String,
-// })
-//
-// const showZoomControls = t.struct({
-//   showZoomControl: t.Boolean,
-//   zoomControls: zoomControls
-// })
-
 const mapConfig = t.struct({showZoombar: t.Boolean, showLayerSwitcher: t.Boolean, showBaseMapSwitcher: t.Boolean, showLegend: t.Boolean});
 
 const options = {
@@ -56,13 +44,6 @@ export default class NavigationTools extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    // console.log(nextProps);
-    // if (nextProps.config !== this.state.defaultConfig) {
-    this.setState({defaultConfig: nextProps.config, success: nextProps.success});
-    // }
-  }
-
   save() {
     var basicConfig = this.refs.form.getValue();
     if (basicConfig) {
@@ -82,62 +63,19 @@ export default class NavigationTools extends Component {
     return (
       <div className="row">
         <div className="row">
-          <div className="col-xs-5 col-md-4"></div>
+          <div className="col-xs-5 col-md-4">
+            <h4>{'NavigationTools '}</h4>
+          </div>
           <div className="col-xs-7 col-md-8">
             <button style={{
               display: "inline-block",
               margin: "0px 3px 0px 3px"
-            }} className="btn btn-primary btn-sm pull-right disabled" onClick={this.save.bind(this)}>{"next >>"}</button>
+            }} className="btn btn-primary btn-sm pull-right" onClick={this.save.bind(this)}>{"next >>"}</button>
 
             <button style={{
               display: "inline-block",
               margin: "0px 3px 0px 3px"
             }} className="btn btn-primary btn-sm pull-right" onClick={() => this.props.onPrevious()}>{"<< Previous"}</button>
-          </div>
-        </div>
-        <div className="row" style={{
-          marginTop: "3%"
-        }}>
-          <div className="col-xs-5 col-md-4">
-            <h4>{'NavigationTools '}</h4>
-          </div>
-          <div className="col-xs-7 col-md-8">
-            <a style={{
-              display: "inline-block",
-              margin: "0px 3px 0px 3px"
-            }} className={this.state.success === true
-              ? "btn btn-primary btn-sm pull-right"
-              : "btn btn-primary btn-sm pull-right disabled"} href={`/apps/cartoview_map_viewer_react/${this.props.id}/view/`}>
-              View
-            </a>
-
-            <a style={{
-              display: "inline-block",
-              margin: "0px 3px 0px 3px"
-            }} className={this.state.success === true
-              ? "btn btn-primary btn-sm pull-right"
-              : "btn btn-primary btn-sm pull-right disabled"} href={`/apps/appinstance/${this.props.id}/`} target={"_blank"}>
-              Details
-            </a>
-
-            <button style={{
-              display: "inline-block",
-              margin: "0px 3px 0px 3px"
-            }} className={this.state.success === true
-              ? "btn btn-primary btn-sm pull-right disabled"
-              : "btn btn-primary btn-sm pull-right"} onClick={this.save.bind(this)}>Save</button>
-
-            <p style={this.state.success == true
-              ? {
-                display: "inline-block",
-                margin: "0px 3px 0px 3px",
-                float: "right"
-              }
-              : {
-                display: "none",
-                margin: "0px 3px 0px 3px",
-                float: "right"
-              }}>App instance successfully created!</p>
           </div>
         </div>
         <hr></hr>
