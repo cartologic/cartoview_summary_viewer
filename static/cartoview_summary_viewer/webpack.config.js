@@ -7,6 +7,7 @@ var filename = '[name].bundle.js';
 module.exports = {
   entry: {
     summary: path.join(APP_DIR, 'index.jsx'),
+    config: path.join(APP_DIR, 'Edit.jsx')
   },
   output: {
     path: BUILD_DIR,
@@ -38,7 +39,8 @@ module.exports = {
     extensions: ['', '.js', '.jsx']
   },
   module: {
-    loaders: [{
+    loaders: [
+      {
         test: /\.(js|jsx)$/,
         loader: 'babel-loader',
         exclude: /node_modules/
@@ -48,8 +50,7 @@ module.exports = {
       }, {
         test: /\.json$/,
         loader: "json-loader"
-      },
-      {
+      }, {
         test: /\.css$/,
         loader: "style-loader!css-loader"
       }
