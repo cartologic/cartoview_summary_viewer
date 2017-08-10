@@ -13,6 +13,9 @@ import SummaryViewerConfig from './components/SummaryViewerConfig.jsx'
 
 import EditService from './services/editService.jsx'
 
+// summaryViewer items for next use:
+// this.props.config.instance.config.summaryViewer.items
+
 export default class Edit extends Component {
   constructor(props) {
     super(props)
@@ -36,7 +39,7 @@ export default class Edit extends Component {
   }
 
   render() {
-    var {step} = this.state
+    var {step} = this.state;
     const steps = [
       {
         label: "Select Map",
@@ -103,23 +106,47 @@ export default class Edit extends Component {
       }, {
         label: "Summary Viewer Configuration",
         component: SummaryViewerConfig,
+        success: this.state.success,
         props: {
+          items: this.props.config.instance
+            ? this.props.config.instance.config.summaryViewer.items
+            : [],
           instance: this.state.selectedResource,
           config: this.props.config.instance
             ? this.props.config.instance.config
             : this.state.config.config
               ? this.state.config.config
               : undefined,
+          id: this.state.id,
+          success: this.state.success,
           onComplete: (basicConfig) => {
-            console.log(basicConfig);
-            // var {step} = this.state;
-            // this.setState({
-            //   config: Object.assign(this.state.config, basicConfig)
-            // })
-            // this.goToStep(++step)
+            // console.log("state.:", this.state);
+            var {step, config} = this.state;
+            Object.assign(config.config, basicConfig);
+            config.widgets = {
+              SummaryViewer: true
+            }
+            this.setState({
+              config: config
+            }, () => {
+              console.log(this.state);
+            })
+
+            this.editService.save(this.state.config, this.props.config.instance
+              ? this.props.config.instance.id
+              : this.state.id || undefined).then((res) => {
+              if (res.success == true)
+                this.setState({success: true, id: res.id})
+            })
+
           },
           onPrevious: () => {
-            this.onPrevious()
+            this.setState({
+              success: false
+            }, () => {
+              this.onPrevious()
+            })
+
           }
         }
       }

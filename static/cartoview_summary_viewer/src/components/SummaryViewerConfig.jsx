@@ -1,34 +1,26 @@
 import React, {Component} from 'react';
-import t from 'tcomb-form';
-
-const mapConfig = t.struct({showZoombar: t.Boolean, showLayerSwitcher: t.Boolean, showBaseMapSwitcher: t.Boolean, showLegend: t.Boolean});
-
-const options = {
-  fields: {
-    showZoombar: {
-      label: "Zoom Bar"
-    },
-    showLayerSwitcher: {
-      label: "Layer Switcher"
-    },
-    showBaseMapSwitcher: {
-      showBaseMapSwitcher: "Base Map Switcher"
-    },
-    showLegend: {
-      label: "Legend"
-    }
-  }
-};
-
-const Form = t.form.Form;
+import RowItem from './SummaryViewerItem'
 
 const operations = [
-  'Summation',
-  'Average',
-  'Count',
-  'Minimum',
-  'Maximum',
-  'Median'
+  {
+    key: 'Summation',
+    value: 'Sum'
+  }, {
+    key: 'Average',
+    value: 'Average'
+  }, {
+    key: 'Count',
+    value: 'Count'
+  }, {
+    key: 'Maximum',
+    value: 'Max'
+  }, {
+    key: 'Minimum',
+    value: 'Min'
+  }, {
+    key: 'Median',
+    value: 'Media'
+  }
 ]
 
 export default class SummaryViewerConfig extends Component {
@@ -36,14 +28,10 @@ export default class SummaryViewerConfig extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      items: this.props.items,
       layers: [],
       attributes: [],
-      config: {
-        summaryViewer: {
-          items: []
-        }
-      },
-      input: ""
+      success: this.props.success
     }
   }
 
@@ -65,12 +53,40 @@ export default class SummaryViewerConfig extends Component {
     }
   }
 
-  save() {
-    console.log(this.state);
+  save(e) {
+    let config = {
+      summaryViewer: {
+        items: this.state.items
+      }
+    }
+    this.props.onComplete(config)
   }
 
   componentWillMount() {
     this.loadLayers()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({success: nextProps.success})
+  }
+
+  onAddClick() {
+    let items = this.state.items;
+    items.push({title: "", layer: "", attribute: "", operation: ""})
+    this.setState({items: items})
+
+  }
+
+  onRemoveClick(index) {
+    let items = this.state.items
+    items.splice(index, 1)
+    this.setState({items: items})
+  }
+
+  updateValues(itemObject, index) {
+    let items = this.state.items
+    items[index] = itemObject;
+    this.setState({items: items, success: false})
   }
 
   renderNextPrevious() {
@@ -106,7 +122,7 @@ export default class SummaryViewerConfig extends Component {
             margin: "0px 3px 0px 3px"
           }} className={this.state.success === true
             ? "btn btn-primary btn-sm pull-right"
-            : "btn btn-primary btn-sm pull-right disabled"} href={`/apps/cartoview_map_viewer_react/${this.props.id}/view/`}>
+            : "btn btn-primary btn-sm pull-right disabled"} href={`/apps/cartoview_summary_viewer/${this.props.id}/view/`}>
             View
           </a>
 
@@ -142,71 +158,6 @@ export default class SummaryViewerConfig extends Component {
     )
   }
 
-  renderItemRow() {
-    return (
-      <div className="row">
-        <form>
-          <div className="col-xs-12 col-md-3">
-            <div className="form-group">
-              <label>Item Title</label>
-              <input value={this.state.input} onChange={(e) => {
-                this.setState({input: e.target.value})
-              }} type="text" className="form-control" placeholder="Item title"/>
-            </div>
-          </div>
-          <div className="col-xs-12 col-md-3">
-            <div className="form-group">
-              <label>Layer</label>
-              <select className="form-control" onChange={(e) => {
-                this.loadAttributes(e.target.value)
-              }} required>
-                <option value={""}>Select Layer</option>
-                {this.state.layers && this.state.layers.map((layer, i) => {
-                  return <option key={`${i}`} value={layer.typename}>{layer.title}</option>
-                })}
-              </select>
-            </div>
-          </div>
-          <div className="col-xs-12 col-md-3">
-            <div className="form-group">
-              <label>Attribute</label>
-              <select className="form-control" onChange={(e) => {
-                console.log(e.target.value);
-              }} required>
-                <option value={""}>Select Attribute</option>
-                {this.state.attributes && this.state.attributes.map((attribute, i) => {
-                  // filter only numeric attributes
-                  if (attribute.attribute_type.toLowerCase() != "xsd:string" && attribute.attribute_type.indexOf('gml:') == -1) {
-                    return <option key={`${i}`} value={attribute.attribute}>{attribute.attribute}</option>
-                  }
-                })}
-              </select>
-            </div>
-          </div>
-          <div className="col-xs-12 col-md-2">
-            <div className="form-group">
-              <label>Operation</label>
-              <select className="form-control" onChange={(e) => {
-                console.log(e.target.value)
-              }} required>
-                <option value={""}>Operation</option>
-                {operations.map((operation, index) => {
-                  return <option key={`${index}`} value={operation.toLowerCase()}>{operation}</option>
-                })}
-              </select>
-            </div>
-          </div>
-          <div className="col-xs-12 col-md-1">
-            <label></label>
-            <button type="button" className={'btn btn-danger'} style={{
-              width: '100%'
-            }}>X</button>
-          </div>
-        </form>
-      </div>
-    )
-  }
-
   render() {
     return (
       <div className="row">
@@ -217,13 +168,22 @@ export default class SummaryViewerConfig extends Component {
 
         <hr></hr>
 
-        {this.renderItemRow()}
+        {this.state.items.map((item, index) => {
+          return <RowItem key={`${index}`} index={index} onRemoveClick={(index) => {
+            this.onRemoveClick(index)
+          }} updateValues={(itemObject, index) => {
+            this.updateValues(itemObject, index)
+          }} {...this.props} item={item}/>
+        })}
 
         <div className="row">
           <div className="col-xs-5 col-md-4">
-            <button className={'btn btn-primary'}>Add Item</button>
+            <button className={'btn btn-primary'} onClick={() => {
+              this.onAddClick()
+            }}>Add Item</button>
           </div>
         </div>
       </div>
     )
   }
+}
