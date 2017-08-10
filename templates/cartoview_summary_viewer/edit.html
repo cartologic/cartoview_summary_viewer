@@ -2,7 +2,7 @@
 {% load bootstrap_tags staticfiles %}
 {% load i18n %}
 
-{% block title %} Web App Builder {% endblock %}
+{% block title %} Summary Viewer {% endblock %}
 {% block head %}
     {% include "geonode/ext_header.html" %}
     {% include "geonode/app_header.html" %}
@@ -50,7 +50,7 @@
       },
       'urls': {
         'resources_url': "/api/maps",
-        "view": "/apps/cartoview_webapp_builder/" + instance_id + "/view/"
+        "view": "/apps/cartoview_summary_viewer/" + instance_id + "/view/"
       },
       'limit': 9
     }, username, keywords);
