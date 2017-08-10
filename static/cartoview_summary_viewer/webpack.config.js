@@ -7,7 +7,7 @@ var filename = '[name].bundle.js';
 module.exports = {
   entry: {
     summary: path.join(APP_DIR, 'index.jsx'),
-    config: path.join(APP_DIR, 'Edit.jsx')
+    config: path.join(APP_DIR, 'AppRender.jsx')
   },
   output: {
     path: BUILD_DIR,
