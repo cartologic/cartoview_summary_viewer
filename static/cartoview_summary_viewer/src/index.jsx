@@ -92,7 +92,7 @@ export default class CartoviewSummary extends React.Component {
     appConfig.summaryViewer.items.forEach((item, i) => {
       if (extent != undefined) {
         this.wpsClient.aggregateWithFilters({aggregationAttribute: item.attribute, aggregationFunction: item.operation, filters: extent, typeName: item.layer}).then((res) => {
-          data.push({value: res.AggregationResults[0][0],id:item.id, title: item.title});
+          data.push({value: res.AggregationResults[0][0], id: item.id, title: item.title});
           if (data.length == appConfig.summaryViewer.items.length) {
             loading = false;
           }
