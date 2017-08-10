@@ -1,6 +1,8 @@
 from django.shortcuts import render, HttpResponse
 from django.contrib.auth.decorators import login_required
 
+from cartoview_map_viewer import views as viewer_views
+
 import json
 
 from django.utils.safestring import mark_safe
@@ -8,6 +10,8 @@ from geonode.maps.views import _PERMISSION_MSG_VIEW
 
 from cartoview.app_manager.models import AppInstance, App
 from cartoview.app_manager.views import _resolve_appinstance
+
+from .viewer_widgets import widgets
 
 from . import APP_NAME
 
@@ -82,28 +86,27 @@ def new(request, template="%s/new.html" % APP_NAME, app_name=APP_NAME, context={
         return save(request, app_name=app_name)
     return render(request, template, context)
 
-
 @login_required
 def edit(request, instance_id, template="%s/edit.html" % APP_NAME, context={}):
     instance = _resolve_appinstance(
         request, instance_id, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
-
+    context.update(keywords=mark_safe(json.dumps(instance.keyword_list())))
     if request.method == 'POST':
         return save(request, instance_id)
-    # instance = AppInstance.objects.get(pk=instance_id)
+    instance = AppInstance.objects.get(pk=instance_id)
     context.update(instance=instance)
-    # convert keywords list into json string &
-    # use mark_safe to remove the trailing slash "keyword/"
-    context.update(keywords=mark_safe(json.dumps(instance.keyword_list())))
-
     return render(request, template, context)
 
 
-def view_app(request, instance_id, template="%s/view.html" % APP_NAME, context={}):
-    instance = _resolve_appinstance(
-        request, instance_id, 'base.view_resourcebase', _PERMISSION_MSG_VIEW)
-    context.update({
-        "map_config": instance.map.viewer_json(request.user, None),
-        "instance": instance
-    })
-    return render(request, template, context)
+def view_map(request, instance_id):
+    instance = AppInstance.objects.get(pk=instance_id)
+    context = dict(widgets=widgets)
+    context.update(instance=instance)
+    return viewer_views.view_app(request, instance_id, template="%s/view.html" % APP_NAME, context=context)
+
+
+def map_config(request):
+    instance_id = request.GET.get("id")
+    instance = AppInstance.objects.get(pk=instance_id)
+    config = instance.map.viewer_json(request.user)
+    return HttpResponse(json.dumps(config), content_type="application/json")
