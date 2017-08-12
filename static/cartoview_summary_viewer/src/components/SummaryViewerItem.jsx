@@ -22,6 +22,24 @@ const operations = [
   }
 ]
 
+const numericTypes = [
+  'xsd:byte',
+  'xsd:decimal',
+  'xsd:double',
+  'xsd:int',
+  'xsd:integer',
+  'xsd:long',
+  'xsd:negativeInteger',
+  'xsd:nonNegativeInteger',
+  'xsd:nonPositiveInteger',
+  'xsd:positiveInteger',
+  'xsd:short',
+  'xsd:unsignedLong',
+  'xsd:unsignedInt',
+  'xsd:unsignedShort',
+  'xsd:unsignedByte'
+];
+
 export default class Item extends Component {
 
   constructor(props) {
@@ -130,7 +148,8 @@ export default class Item extends Component {
                 </option>
                 {this.state.attributes && this.state.attributes.map((attribute, i) => {
                   // filter only numeric attributes
-                  if (attribute.attribute_type.toLowerCase() != "xsd:string" && attribute.attribute_type.indexOf('gml:') == -1) {
+                  let type = attribute.attribute_type;
+                  if (numericTypes.indexOf(type) != -1 && type.indexOf("gml:") == -1) {
                     return <option key={`${i}`} value={attribute.attribute}>{attribute.attribute}</option>
                   }
                 })}
