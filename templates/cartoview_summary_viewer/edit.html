@@ -34,7 +34,7 @@
     var instance_id={{instance.id}};
     var geoserver_url = "{{ GEOSERVER_BASE_URL }}";
     var abstract = " {% spaceless %}{{ instance.abstract|title }}{% endspaceless %} ";
-    var keywords = {{keywords|safe}}
+    var keywords = {{keywords|safeseq}}
     {% endif %}
 
     var username = "{{instance.owner.username}}";
