@@ -1,7 +1,7 @@
 {% extends "app_manager/app_install_base.html" %}
 {% load bootstrap_tags staticfiles %}
 {% load i18n %}
-
+{% load cartoview_tags %}
 {% block title %} Summary Viewer {% endblock %}
 {% block head %}
     {% include "geonode/ext_header.html" %}
@@ -34,7 +34,7 @@
     var instance_id={{instance.id}};
     var geoserver_url = "{{ GEOSERVER_BASE_URL }}";
     var abstract = " {% spaceless %}{{ instance.abstract|title }}{% endspaceless %} ";
-    var keywords = {{keywords|safeseq}}
+    var keywords = {{instance.keyword_list|jsonify}}
     {% endif %}
 
     var username = "{{instance.owner.username}}";
