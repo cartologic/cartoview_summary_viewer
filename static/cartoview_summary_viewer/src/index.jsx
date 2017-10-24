@@ -1,25 +1,28 @@
+import './app.css';
+
+import {IntlProvider, addLocaleData} from 'react-intl';
+import {findDOMNode, render} from 'react-dom';
+
+import $ from "jquery";
+import BaseMapModal from '@boundlessgeo/sdk/components/BaseMapModal';
+import CustomTheme from './theme';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import FloatingPanel from './floatingPanel';
+import IconButton from 'material-ui/IconButton';
+import IconMenu from 'material-ui/IconMenu';
+import LayerList from '@boundlessgeo/sdk/components/LayerList';
+import Legend from '@boundlessgeo/sdk/components/Legend';
+import MapConfigService from '@boundlessgeo/sdk/services/MapConfigService';
+import MapConfigTransformService from '@boundlessgeo/sdk/services/MapConfigTransformService';
 import React from 'react';
-import {render, findDOMNode} from 'react-dom';
-import {addLocaleData, IntlProvider} from 'react-intl';
-import injectTapEventPlugin from 'react-tap-event-plugin';
+import WpsClient from './wps-client.jsx';
+import Zoom from '@boundlessgeo/sdk/components/Zoom';
 import enLocaleData from 'react-intl/locale-data/en';
 import enMessages from '@boundlessgeo/sdk/locale/en';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MapConfigTransformService from '@boundlessgeo/sdk/services/MapConfigTransformService';
-import MapConfigService from '@boundlessgeo/sdk/services/MapConfigService';
-import LayerList from '@boundlessgeo/sdk/components/LayerList';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 import ol from 'openlayers';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import BaseMapModal from '@boundlessgeo/sdk/components/BaseMapModal';
-import Zoom from '@boundlessgeo/sdk/components/Zoom';
-import Legend from '@boundlessgeo/sdk/components/Legend';
-import IconButton from 'material-ui/IconButton';
-import IconMenu from 'material-ui/IconMenu';
-import WpsClient from './wps-client.jsx';
-import $ from "jquery";
-import CustomTheme from './theme';
-import './app.css';
-import FloatingPanel from './floatingPanel';
+
 injectTapEventPlugin();
 addLocaleData(enLocaleData);
 export default class CartoviewSummary extends React.Component {
@@ -73,7 +76,7 @@ export default class CartoviewSummary extends React.Component {
         }
       }).then((config) => {
         if (config) {
-          MapConfigService.load(MapConfigTransformService.transform(config), this.map);
+          MapConfigService.load(MapConfigTransformService.transform(config), this.map,PROXY_URL);
         }
       });
 
@@ -173,5 +176,6 @@ CartoviewSummary.childContextTypes = {
 };
 render(
   <IntlProvider locale='en' messages={enMessages}>
-  <CartoviewSummary></CartoviewSummary>
-</IntlProvider>, document.getElementById('root'))
+    <CartoviewSummary></CartoviewSummary>
+  </IntlProvider>
+  , document.getElementById('root'))
