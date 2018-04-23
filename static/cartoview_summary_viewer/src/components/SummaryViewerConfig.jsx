@@ -45,7 +45,7 @@ export default class SummaryViewerConfig extends Component {
 
   loadAttributes(typename) {
     if (typename != "") {
-      fetch(`/apps/rest/app_manager/geonodelayerattribute/?layer__typename=${typename}`).then((response) => response.json()).then((data) => {
+      fetch(`/api/attributes/?layer__typename=${typename}`).then((response) => response.json()).then((data) => {
         this.setState({attributes: data.objects})
       }).catch((error) => {
         console.error(error);
