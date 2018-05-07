@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import RowItem from './SummaryViewerItem'
-
 const operations = [
+
   {
     key: 'Summation',
     value: 'Sum'
@@ -31,8 +31,9 @@ export default class SummaryViewerConfig extends Component {
       items: this.props.items,
       layers: [],
       attributes: [],
-      success: this.props.success
+      success: this.props.success,
     }
+    this.itemsRefs = []
   }
 
   loadLayers() {
@@ -54,12 +55,14 @@ export default class SummaryViewerConfig extends Component {
   }
 
   save(e) {
-    let config = {
-      summaryViewer: {
-        items: this.state.items
+    if (this.validAllforms()) {
+      let config = {
+        summaryViewer: {
+          items: this.state.items
+        }
       }
+      this.props.onComplete(config)
     }
-    this.props.onComplete(config)
   }
 
   componentWillMount() {
@@ -71,14 +74,16 @@ export default class SummaryViewerConfig extends Component {
   }
 
   onAddClick() {
-    let items = this.state.items;
-    items.push({title: "", layer: "", attribute: "", operation: ""})
-    this.setState({items: items})
-
+    if (this.validAllforms()) {
+      let items = this.state.items;
+      items.push({title: "", layer: "", attribute: "", operation: ""})
+      this.setState({items: items})
+    }
   }
 
   onRemoveClick(index) {
     let items = this.state.items
+    delete this.itemsRefs[index]
     items.splice(index, 1)
     this.setState({items: items})
   }
@@ -158,6 +163,23 @@ export default class SummaryViewerConfig extends Component {
     )
   }
 
+  validAllforms() {
+    let valid = true
+    console.log(this.itemsRefs)
+    if (this.itemsRefs.length > 0) {
+      for (let i = 0; i < this.itemsRefs.length; i++){
+        if (this.itemsRefs[i]) {
+          this.itemsRefs[i].click()
+          if (!this.itemsRefs[i].form.checkValidity()) {
+            valid = false
+            break
+          }
+        }
+      }
+    }
+    return valid
+  }
+
   render() {
     return (
       <div className="row">
@@ -169,7 +191,9 @@ export default class SummaryViewerConfig extends Component {
         <hr></hr>
 
         {this.state.items.map((item, index) => {
-          return <RowItem key={`${index}`} index={index} onRemoveClick={(index) => {
+          return <RowItem key={`${index}`}
+            setRef = {node => {this.itemsRefs[index] = node }}  
+            index={index} onRemoveClick={(index) => {
             this.onRemoveClick(index)
           }} updateValues={(itemObject, index) => {
             this.updateValues(itemObject, index)
@@ -186,4 +210,5 @@ export default class SummaryViewerConfig extends Component {
       </div>
     )
   }
+
 }

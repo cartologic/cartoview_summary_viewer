@@ -95,10 +95,14 @@ export default class Item extends Component {
     }
   }
 
+  handleSubmit(event) {
+    event.preventDefault();
+  }
+
   render() {
     return (
       <div className="row">
-        <form>
+        <form onSubmit={this.handleSubmit.bind(this)}>
           <div className="col-xs-12 col-md-3">
             <div className="form-group">
               <label>Item Title</label>
@@ -108,10 +112,11 @@ export default class Item extends Component {
                 }, () => {
                   this.save()
                 })
-              }} type="text" className="form-control" placeholder="Item title"/>
+              }} type="text" className="form-control" placeholder="Item title" required/>
             </div>
           </div>
-
+          
+          {/* Select Layer */}
           <div className="col-xs-12 col-md-3">
             <div className="form-group">
               <label>Layer</label>
@@ -132,7 +137,8 @@ export default class Item extends Component {
               </select>
             </div>
           </div>
-
+                
+          {/* Select Attribute */}          
           <div className="col-xs-12 col-md-3">
             <div className="form-group">
               <label>Attribute</label>
@@ -143,7 +149,7 @@ export default class Item extends Component {
                   this.save()
                 })
               }} value={this.state.attribute} required>
-                <option>
+                <option value={""}>
                   Select Attribute
                 </option>
                 {this.state.attributes && this.state.attributes.map((attribute, i) => {
@@ -157,6 +163,7 @@ export default class Item extends Component {
             </div>
           </div>
 
+          {/* Select Operation */}                            
           <div className="col-xs-12 col-md-2">
             <div className="form-group">
               <label>Operation</label>
@@ -167,7 +174,7 @@ export default class Item extends Component {
                   this.save()
                 })
               }} value={this.state.operation} required>
-                <option>
+                <option value={""}>
                   Operation
                 </option>
                 {operations.map((operation, index) => {
@@ -177,6 +184,7 @@ export default class Item extends Component {
             </div>
           </div>
 
+          <button type={'submit'} ref={(node) => { this.props.setRef(node) }} hidden>Submit</button>
           <div className="col-xs-12 col-md-1">
             <label></label>
             <button type="button" className={'btn btn-danger'} onClick={() => {

@@ -126,12 +126,7 @@ export default class Edit extends Component {
             config.widgets = {
               SummaryViewer: true
             }
-            this.setState({
-              config: config
-            }, () => {
-              console.log(this.state);
-            })
-
+            this.setState({ config: config })
             this.editService.save(this.state.config, this.props.config.instance
               ? this.props.config.instance.id
               : this.state.id || undefined).then((res) => {
