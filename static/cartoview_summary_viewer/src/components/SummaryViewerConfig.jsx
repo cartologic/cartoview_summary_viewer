@@ -32,6 +32,7 @@ export default class SummaryViewerConfig extends Component {
       layers: [],
       attributes: [],
       success: this.props.success,
+      noItems: false,
     }
     this.itemsRefs = []
   }
@@ -55,13 +56,18 @@ export default class SummaryViewerConfig extends Component {
   }
 
   save(e) {
-    if (this.validAllforms()) {
-      let config = {
-        summaryViewer: {
-          items: this.state.items
-        }
+    if (this.state.items.length == 0) this.setState({ noItems: true })
+    else {
+      if (this.validAllforms()) {
+        this.setState({ noItems: false }, () => {
+          let config = {
+            summaryViewer: {
+              items: this.state.items
+            }
+          }
+          this.props.onComplete(config)
+        })
       }
-      this.props.onComplete(config)
     }
   }
 
@@ -158,6 +164,19 @@ export default class SummaryViewerConfig extends Component {
               margin: "0px 3px 0px 3px",
               float: "right"
             }}>App instance successfully created!</p>
+
+          <p style={this.state.noItems
+            ? {
+              display: "inline-block",
+              margin: "0px 3px 0px 3px",
+              float: "right",
+              color: 'darkred',
+            }
+            : {
+              display: "none",
+              margin: "0px 3px 0px 3px",
+              float: "right"
+            }}>No Items Added!</p>
         </div>
       </div>
     )
