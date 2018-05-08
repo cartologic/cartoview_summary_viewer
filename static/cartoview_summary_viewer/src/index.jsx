@@ -22,6 +22,7 @@ import enMessages from '@boundlessgeo/sdk/locale/en';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import ol from 'openlayers';
+import {default as ErrorDialog} from './components/ErrorDialog.jsx'
 
 injectTapEventPlugin();
 addLocaleData(enLocaleData);
@@ -71,6 +72,9 @@ export default class CartoviewSummary extends React.Component {
         method: "GET",
         credentials: 'include'
       }).then((response) => {
+        if (response.status == 403) {
+          this.setState({permissionError: true, loading: false})
+        }
         if (response.status == 200) {
           return response.json();
         }
@@ -126,7 +130,13 @@ export default class CartoviewSummary extends React.Component {
   _toggleBaseMapModal() {
     this.refs.basemapmodal.getWrappedInstance().open();
   }
+  renderPermissionErrorMessage() {
+    return <ErrorDialog open={this.state.permissionError}/>
+  }
   render() {
+    if (this.state.permissionError)
+      return (this.renderPermissionErrorMessage())
+    
     const basemap_button = appConfig.showBasemapSwitcher
       ? <FloatingActionButton className="basemap_button" onTouchTap={this._toggleBaseMapModal.bind(this)} mini={true}>
           <i className="fa fa-map" aria-hidden="true"></i>
