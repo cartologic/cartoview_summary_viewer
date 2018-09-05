@@ -62,7 +62,7 @@ export default class Item extends Component {
   }
 
   loadLayers() {
-    fetch(`/apps/maplayers/api?id=${this.props.instance.id}`).then((response) => response.json()).then((data) => {
+    fetch(`${this.props.urls.mapLayers}?map__id=${this.props.instance.id}&local=true`).then((response) => response.json()).then((data) => {
       this.setState({layers: data.objects})
     }).catch((error) => {
       console.error(error);
@@ -127,7 +127,7 @@ export default class Item extends Component {
                   Select Layer
                 </option>
                 {this.state.layers && this.state.layers.map((layer, i) => {
-                  return <option key={`${i}`} value={layer.typename}>{layer.title}</option>
+                  return <option key={`${i}`} value={layer.name}>{layer.name}</option>
                 })}
               </select>
             </div>

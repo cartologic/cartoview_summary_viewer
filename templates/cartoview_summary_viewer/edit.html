@@ -30,7 +30,7 @@
     var instance_id={{instance.id}};
     var geoserver_url = "{{ GEOSERVER_BASE_URL }}";
     var abstract = " {% spaceless %}{{ instance.abstract|title }}{% endspaceless %} ";
-    var keywords = {{instance.keyword_list|jsonify}}
+    var keywords = {{instance.keyword_list|dump_json}}
     {% endif %}
 
     var username = "{{instance.owner.username}}";
@@ -46,7 +46,8 @@
       },
       'urls': {
         'resources_url': "/api/maps",
-        "view": "/apps/cartoview_summary_viewer/" + instance_id + "/view/"
+        "view": "/apps/cartoview_summary_viewer/" + instance_id + "/view/",
+        mapLayers:"{% url 'api_dispatch_list' api_name='api' resource_name='maplayers' %}",
       },
       'limit': 9
     }, username, keywords);

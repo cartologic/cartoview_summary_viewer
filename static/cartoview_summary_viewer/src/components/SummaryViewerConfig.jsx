@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+
 import RowItem from './SummaryViewerItem'
 
 const operations = [
@@ -36,7 +37,7 @@ export default class SummaryViewerConfig extends Component {
   }
 
   loadLayers() {
-    fetch(`/apps/maplayers/api?id=${this.props.instance.id}`).then((response) => response.json()).then((data) => {
+    fetch(`${this.props.urls.mapLayers}?map__id=${this.props.instance.id}&local=true`).then((response) => response.json()).then((data) => {
       this.setState({layers: data.objects})
     }).catch((error) => {
       console.error(error);
@@ -169,7 +170,7 @@ export default class SummaryViewerConfig extends Component {
         <hr></hr>
 
         {this.state.items.map((item, index) => {
-          return <RowItem key={`${index}`} index={index} onRemoveClick={(index) => {
+          return <RowItem urls={this.props.urls} key={`${index}`} index={index} onRemoveClick={(index) => {
             this.onRemoveClick(index)
           }} updateValues={(itemObject, index) => {
             this.updateValues(itemObject, index)

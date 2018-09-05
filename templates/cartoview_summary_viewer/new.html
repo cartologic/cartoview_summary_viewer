@@ -22,7 +22,9 @@
     <script src="{{ STATIC_URL }}cartoview_summary_viewer/dist/config.bundle.js"></script>
     <script>
     var username="{{request.user.username}}"
-    var viewer=new Viewer('root',{'urls':{'resources_url':"/api/maps","mapLayers":"/apps/maplayers/api","layerAttributes":"/api/attributes/"},'limit':9},username);
+    var viewer=new Viewer('root',{'urls':{'resources_url':"/api/maps",
+    mapLayers:"{% url 'api_dispatch_list' api_name='api' resource_name='maplayers' %}",
+    "layerAttributes":"/api/attributes/"},'limit':9},username);
     viewer.view();
     </script>
     <div id="myModal" class="modal fade" role="dialog">

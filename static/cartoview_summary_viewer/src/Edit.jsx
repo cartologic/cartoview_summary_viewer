@@ -1,17 +1,18 @@
-import React, {Component} from 'react'
 import '../css/app.css'
 
-import Navigator from './components/Navigator.jsx'
+import React, {Component} from 'react'
 
-import ResourceSelector from './components/ResourceSelector.jsx'
+import EditService from './services/editService.jsx'
 import General from './components/General.jsx'
 import NavigationTools from './components/NavigationTools.jsx'
+import Navigator from './components/Navigator.jsx'
+import ResourceSelector from './components/ResourceSelector.jsx'
 import SummaryViewerConfig from './components/SummaryViewerConfig.jsx'
+
 // import MapTools from './components/MapTools.jsx'
 // import Reporting from './components/Reporting.jsx'
 // import DisplayConfig from './components/DisplayConfig.jsx'
 
-import EditService from './services/editService.jsx'
 
 // summaryViewer items for next use:
 // this.props.config.instance.config.summaryViewer.items
@@ -118,6 +119,7 @@ export default class Edit extends Component {
               ? this.state.config.config
               : undefined,
           id: this.state.id,
+          urls: this.props.config.urls,
           success: this.state.success,
           onComplete: (basicConfig) => {
             // console.log("state.:", this.state);
